@@ -1,0 +1,12 @@
+services:
+  chapter2:
+    image: chapter2
+    build:
+      context: chapter 2
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 8383:8383
+      - 9229:9229
+    command: ["node", "--inspect=0.0.0.0:9229", "index.js"]

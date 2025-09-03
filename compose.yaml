@@ -1,0 +1,10 @@
+services:
+  chapter2:
+    image: chapter2
+    build:
+      context: chapter 2
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 8383:8383
