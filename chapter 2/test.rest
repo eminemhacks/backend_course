@@ -1,0 +1,27 @@
+### TEST GET HOME PAGE
+GET http://localhost:8383/
+
+### TEST GET DASHBOARD WEBSITE
+GET http://localhost:8383/dashboard
+
+### TEST GET API DATA
+GET http://localhost:8383/api/data
+
+
+### TEST POST API DATA
+POST http://localhost:8383/api/data
+Content-Type: application/json
+
+{
+    "data": {
+        "name": "John",
+        "details": {
+            "age": 30,
+            "job": "developer"
+        }
+    }
+}
+
+
+### TEST DELETE API DATA
+DELETE http://localhost:8383/api/data
