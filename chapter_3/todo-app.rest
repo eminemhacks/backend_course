@@ -6,15 +6,16 @@ POST http://localhost:5003/auth/register
 Content-Type: application/json
 
 {
+    "name": "Test User",
     "username": "test@username.com",
     "password": "user1pass"
 }
 
 ### POST LOGIN USER AUTH/LOGIN
 POST http://localhost:5003/auth/login
-Content-Type: application/json;
+Content-Type: application/json
 
 {
-    "username": "alaburaismail@gmail.com",
-    "password": "user1pass"
-}   
+  "username": "testuser",
+  "password": "secret123"
+}

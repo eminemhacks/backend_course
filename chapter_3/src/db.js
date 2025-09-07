@@ -6,6 +6,7 @@ const db = new DatabaseSync(':memory:');
 db.exec(`
     CREATE TABLE user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
         username TEXT UNIQUE,
         password TEXT
     );
