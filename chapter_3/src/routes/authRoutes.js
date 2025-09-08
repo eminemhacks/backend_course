@@ -16,7 +16,7 @@ router.post('/register', (req, res) => {
 
     // save the new user and hashed password to the db
     try {
-        const insertUser = db.prepare(`INSERT INTO user (username, password) VALUES (?, ?)`)
+        const insertUser = db.prepare(`INSERT INTO users (username, password) VALUES (?, ?)`)
         const result = insertUser.run(username, hashedPassword)
 
         // now that we have a user, I want to add their first todo for them
@@ -25,7 +25,7 @@ router.post('/register', (req, res) => {
         insertTodo.run(result.lastInsertRowid, defaultTodo)
 
         // create a token
-        const token = jwt.sign({ id: result.lastInsertRowid }, process.env.JWT_SECRET, { expiresIn: '24h' })
+        const token = jwt.sign({ id: result.lastInsertRowid }, process.env.JWT_SECRET, { expiresIn: '15m' })
         res.json({ token })
     } catch (err) {
         console.log(err.message)
@@ -41,7 +41,7 @@ router.post('/login', (req, res) => {
     const { username, password } = req.body
 
     try {
-        const getUser = db.prepare('SELECT * FROM user WHERE username = ?')
+        const getUser = db.prepare('SELECT * FROM users WHERE username = ?')
         const user = getUser.get(username)
 
         // if we cannot find a user associated with that username, return out from the function
@@ -53,7 +53,7 @@ router.post('/login', (req, res) => {
         console.log(user)
 
         // then we have a successful authentication
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' })
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' })
         res.json({ token })
     } catch (err) {
         console.log(err.message)

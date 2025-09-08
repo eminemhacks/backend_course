@@ -6,8 +6,7 @@ POST http://localhost:5003/auth/register
 Content-Type: application/json
 
 {
-    "name": "Test User",
-    "username": "test@username.com",
+    "username": "test2@username.com",
     "password": "user1pass"
 }
 
@@ -16,6 +15,34 @@ POST http://localhost:5003/auth/login
 Content-Type: application/json
 
 {
-  "username": "testuser",
-  "password": "secret123"
+  "username": "test2@username.com",
+  "password": "user1pass"
 }
+
+### fetch all todos GET /todos
+GET http://localhost:5003/todos
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzU3Mjk0NjI3LCJleHAiOjE3NTcyOTU1Mjd9.pHYOIUNzOVB9jP2iJzTLIaGy8BUJiaKN4OdGDqk2-dM
+
+
+
+### create a new todo POST /todos
+POST http://localhost:5003/todos
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzU3Mjk0NTMwLCJleHAiOjE3NTcyOTU0MzB9.8d6SP2rzFpd9H3GVL-I3yDQHmYSbHHi7iam1y_0V290
+
+{
+  "task": "New Todo"
+  
+}
+
+### update a todo PUT /todos/:id
+PUT http://localhost:5003/todos/2?page=4
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzU3Mjk0NTMwLCJleHAiOjE3NTcyOTU0MzB9.8d6SP2rzFpd9H3GVL-I3yDQHmYSbHHi7iam1y_0V290
+
+{
+  "completed": 1,
+  "task": "Updated Task"
+}
+
+### DELETE a todo DELETE /todos/:id
+DELETE http://localhost:5003/todos/2
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzU3Mjk0NjI3LCJleHAiOjE3NTcyOTU1Mjd9.pHYOIUNzOVB9jP2iJzTLIaGy8BUJiaKN4OdGDqk2-dM

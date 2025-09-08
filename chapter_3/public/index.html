@@ -64,7 +64,7 @@
 
     // elements
     const nav = document.querySelector('nav')
-    const header = document.querySelector('header')
+    const header = document.querySelector('header') 
     const main = document.querySelector('main')
     const navElements = document.querySelectorAll('.tab-button')
     const authContent = document.getElementById('auth')
@@ -73,9 +73,6 @@
     const password = document.getElementById('passwordInput')
     const registerBtn = document.getElementById('registerBtn')
     const authBtn = document.getElementById('authBtn')
-    const addTodoBtn = document.getElementById('addTodoBtn')
-    // const deleteBtn = document.getElementById('')
-    // const updateBtn = 
 
     // PAGE RENDERING LOGIC
     async function showDashboard() {
@@ -85,6 +82,13 @@
         authContent.style.display = 'none'
 
         await fetchTodos()
+    }
+
+    function showLogin() {
+        authContent.style.display = 'block'
+        nav.style.display = 'none'
+        header.style.display = 'none'
+        main.style.display = 'none'
     }
 
     function updateHeaderText() {
@@ -98,18 +102,10 @@
     function updateNavCount() {
         navElements.forEach(ele => {
             const btnText = ele.innerText.split(' ')[0]
-
-            // filter todos in here
             const count = todos.filter(val => {
-                if (btnText === 'All') {
-                    return true
-                }
-                return btnText === 'Complete' ?
-                    val.completed :
-                    !val.completed
+                if (btnText === 'All') return true
+                return btnText === 'Complete' ? val.completed : !val.completed
             }).length
-
-            // target inside space and update value
             ele.querySelector('span').innerText = `(${count})`
         })
     }
@@ -127,15 +123,13 @@
     }
 
     function renderTodos() {
-        // need to add filtering logic in here
-
         updateNavCount()
         updateHeaderText()
 
         let todoList = ``
         todos.filter(val => {
             return selectedTab === 'All' ? true : selectedTab === 'Complete' ? val.completed : !val.completed
-        }).forEach((todo, todoIndex) => {
+        }).forEach((todo) => {
             const taskIndex = todo.id
             todoList += `
             <div class="card todo-item">
@@ -162,10 +156,7 @@
         main.innerHTML = todoList
     }
 
-    // showDashboard()
-
     // AUTH LOGIC
-
     async function toggleIsRegister() {
         isRegistration = !isRegistration
         registerBtn.innerText = isRegistration ? 'Sign in' : 'Sign up'
@@ -175,11 +166,9 @@
     }
 
     async function authenticate() {
-        // access email and pass values
         const emailVal = email.value
         const passVal = password.value
 
-        // guard clauses... if authenticating, return
         if (
             isLoading ||
             isAuthenticating ||
@@ -189,7 +178,6 @@
             !emailVal.includes('@')
         ) { return }
 
-        // reset error and set isAuthenticating to true
         error.style.display = 'none'
         isAuthenticating = true
         authBtn.innerText = 'Authenticating...'
@@ -197,7 +185,6 @@
         try {
             let data
             if (isRegistration) {
-                // register an account
                 const response = await fetch(apiBase + 'auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -205,7 +192,6 @@
                 })
                 data = await response.json()
             } else {
-                // login an account
                 const response = await fetch(apiBase + 'auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -217,14 +203,8 @@
             if (data.token) {
                 token = data.token
                 localStorage.setItem('token', token)
-
-                // authenicating into loading
                 authBtn.innerText = 'Loading...'
-
-                // fetch todos
                 await fetchTodos()
-
-                // show dashboard
                 showDashboard()
             } else {
                 throw Error('❌ Failed to authenticate...')
@@ -238,29 +218,40 @@
             authBtn.innerText = 'Submit'
             isAuthenticating = false
         }
-
-
     }
 
     function logout() {
-        // wipe states and clear cached token
+        token = null
+        localStorage.removeItem('token')
+        showLogin()
     }
 
     // CRUD LOGIC
-
     async function fetchTodos() {
         isLoading = true
-        const response = await fetch(apiBase + 'todos', {
-            headers: { 'Authorization': token }
-        })
-        const todosData = await response.json()
-        todos = todosData
-        isLoading = false
-        renderTodos()
+        try {
+            const response = await fetch(apiBase + 'todos', {
+                headers: { 'Authorization': token }
+            })
+
+            if (response.status === 401) {
+                // invalid or expired token → logout
+                logout()
+                return
+            }
+
+            const todosData = await response.json()
+            todos = todosData
+            renderTodos()
+        } catch (err) {
+            console.error('Error fetching todos:', err)
+            logout()
+        } finally {
+            isLoading = false
+        }
     }
 
     async function updateTodo(index) {
-        // set task complete status to true
         await fetch(apiBase + 'todos' + '/' + index, {
             method: 'PUT',
             headers: {
@@ -273,7 +264,6 @@
     }
 
     async function deleteTodo(index) {
-        // set task complete status to true
         await fetch(apiBase + 'todos' + '/' + index, {
             method: 'DELETE',
             headers: {
@@ -284,10 +274,8 @@
     }
 
     async function addTodo() {
-        // have to access this val later as it's rendered with js
         const todoInput = document.getElementById('todoInput')
         const task = todoInput.value
-
         if (!task) { return }
 
         await fetch(apiBase + 'todos', {
@@ -302,21 +290,18 @@
         fetchTodos()
     }
 
-    // UTILITY FUNCTIONS
-
-
-    // load page and read local storage for key
-
-    // default to login screen
-
-    // if is authenticated, show todo app
+    // STARTUP LOGIC
     if (token) {
-        async function run() {
-            await fetchTodos()
-            showDashboard()
-        }
         run()
+    } else {
+        showLogin()
+    }
+
+    async function run() {
+        await fetchTodos()
+        showDashboard()
     }
 </script>
+
 
 </html>
